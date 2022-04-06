@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    types: [labeled, opened, synchronize]
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: echo Hello, one!
+  jest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: echo Hello, two!
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: echo Hello, three!
+  build:
+    name: Build internal development app
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'ready for review') }}
+    needs:
+      - lint
+      - jest
+      - typescript
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Hello, build!
